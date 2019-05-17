@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apm-eureka
+  labels:
+    app: apm-eureka
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: apm-eureka
+      labels:
+        app: apm-eureka
+    spec:
+      containers:
+        - name: apm-eureka
+          image: xuhe/apm-eureka
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: JAVA_OPTS
+              value: -javaagent:apm-item/agent/skywalking-agent.jar  -Dskywalking.agent.service_name=apm-eureka-k8s
+          ports:
+            - name: http
+              containerPort: 8761
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: apm-eureka
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apm-item
+  labels:
+    app: apm-item
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: apm-item
+      labels:
+        app: apm-item
+    spec:
+      containers:
+        - name: apm-item
+          image: xuhe/apm-item
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: JAVA_OPTS
+              value: -javaagent:apm-item/agent/skywalking-agent.jar  -Dskywalking.agent.service_name=apm-eureka-k8s
+          ports:
+            - name: http
+              containerPort: 8082
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: apm-item

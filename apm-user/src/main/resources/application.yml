@@ -1,0 +1,9 @@
+server:
+  port: 8083
+spring:
+  application:
+    name: apm-user
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
